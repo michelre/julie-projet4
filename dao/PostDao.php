@@ -1,35 +1,22 @@
 <?php
 
 require_once "model/Post.php";
+require_once "BaseDao.php";
 
-class PostDao
+class PostDao extends BaseDao
 {
     public function findAll()
     {
-        $p1 = new Post();
-        $p1
-            ->setId(1)
-            ->setTitle('Title 1')
-            ->setContent('Content 1');
-
-        $p2 = new Post();
-        $p2
-            ->setId(2)
-            ->setTitle('Title 2')
-            ->setContent('Content 2');
-
-        return [$p1, $p2];
-
+        $stmt = $this->db->prepare('SELECT * FROM post');
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_CLASS, Post::class);
     }
 
     public function findById($id)
     {
-        $p = new Post();
-        $p
-            ->setId($id)
-            ->setTitle('Title ' . $id)
-            ->setContent('Content ' . $id);
-        return $p;
+        $stmt = $this->db->prepare('SELECT * FROM post WHERE id = ?');
+        $stmt->execute([$id]);
+        return $stmt->fetchObject(Post::class);
     }
 
     public function create()
